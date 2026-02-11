@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surgery Appointment App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
+        <div class="p-6 border-b border-gray-100">
+            <h1 class="text-2xl font-bold text-blue-600">MediSchedule</h1>
+            <p class="text-xs text-gray-400 mt-1">Surgery Management</p>
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <button onclick="showSection('add-patient')" id="nav-add"
+                class="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg transition-colors bg-blue-50 text-blue-700 font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span>Add Appointment</span>
+            </button>
+            <button onclick="showSection('monthly-view')" id="nav-month"
+                class="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                    </path>
+                </svg>
+                <span>Monthly Overview</span>
+            </button>
+            <button onclick="showSection('view-schedule')" id="nav-view"
+                class="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                    </path>
+                </svg>
+                <span>Daily Schedule</span>
+            </button>
+        </nav>
+        <div class="p-4 border-t border-gray-100">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                    dr</div>
+                <div>
+                    <p class="text-sm font-medium">Dr. Smith</p>
+                    <p class="text-xs text-gray-500">Chief Surgeon</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Header -->
+    <div
+        class="md:hidden fixed top-0 w-full bg-white border-b border-gray-200 z-10 flex items-center justify-between p-4">
+        <h1 class="text-xl font-bold text-blue-600">MediSchedule</h1>
+        <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"
+            class="text-gray-600 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                </path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-20 bg-gray-800 bg-opacity-50 md:hidden"
+        onclick="this.classList.add('hidden')">
+        <div class="bg-white w-64 h-full p-4 space-y-2" onclick="events.stopPropagation()">
+            <div class="mb-6">
+                <h1 class="text-xl font-bold text-blue-600">MediSchedule</h1>
+            </div>
+            <button onclick="showSection('add-patient'); document.getElementById('mobile-menu').classList.add('hidden')"
+                class="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg bg-blue-50 text-blue-700 font-medium">
+                <span>Add Appointment</span>
+            </button>
+            <button
+                onclick="showSection('view-schedule'); document.getElementById('mobile-menu').classList.add('hidden')"
+                class="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg text-gray-600 hover:bg-gray-50">
+                <span>Daily Schedule</span>
+            </button>
+            <button
+                onclick="showSection('monthly-view'); document.getElementById('mobile-menu').classList.add('hidden')"
+                class="w-full flex items-center space-x-3 px-4 py-3 text-left rounded-lg text-gray-600 hover:bg-gray-50">
+                <span>Monthly Overview</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 mt-16 md:mt-0 relative">
+
+        <!-- Add Patient Section -->
+        <section id="add-patient" class="max-w-2xl mx-auto py-6 animate-fade-in">
+            <div class="mb-8">
+                <h2 id="form-title" class="text-2xl font-bold text-gray-900">New Surgery Appointment</h2>
+                <p class="text-gray-500 mt-1">Fill in the details to schedule a new surgery.</p>
+            </div>
+
+            <form id="appointment-form"
+                class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 space-y-6">
+                <input type="hidden" id="appointmentId">
+                <!-- Patient Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="hospitalNumber" class="text-sm font-medium text-gray-700">Hospital Number</label>
+                        <input type="text" id="hospitalNumber" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            placeholder="HN-12345">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="patientName" class="text-sm font-medium text-gray-700">Patient Name</label>
+                        <input type="text" id="patientName" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            placeholder="John Doe">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="patientAge" class="text-sm font-medium text-gray-700">Age</label>
+                        <input type="number" id="patientAge" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            placeholder="45">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="patientGender" class="text-sm font-medium text-gray-700">Gender</label>
+                        <select id="patientGender" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+                            <option value="" disabled selected>Select...</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Surgery Details -->
+                <div class="space-y-2">
+                    <label for="contactNumber" class="text-sm font-medium text-gray-700">Contact Number</label>
+                    <input type="tel" id="contactNumber" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder="+639...">
+                </div>
+
+                <div class="space-y-2">
+                    <label for="diagnosis" class="text-sm font-medium text-gray-700">Diagnosis</label>
+                    <textarea id="diagnosis" rows="2" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder="Patient diagnosis..."></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="surgeryType" class="text-sm font-medium text-gray-700">Proposed Operation</label>
+                    <textarea id="surgeryType" rows="2" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder="Describe the procedure..."></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="surgeryDate" class="text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" id="surgeryDate" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                </div>
+
+                <div class="space-y-2">
+                    <label for="doctorName" class="text-sm font-medium text-gray-700">Assigned Surgeon</label>
+                    <input type="text" id="doctorName"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder="Dr. Smith">
+                </div>
+
+                <div class="space-y-2">
+                    <label for="notes" class="text-sm font-medium text-gray-700">Notes (Optional)</label>
+                    <textarea id="notes" rows="3"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder="Patient history, allergies, etc."></textarea>
+                </div>
+
+                <div class="pt-4 flex items-center space-x-4">
+                    <button type="submit" id="submit-btn"
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-[1.01] shadow-md focus:ring-4 focus:ring-blue-200">
+                        Schedule Appointment
+                    </button>
+                    <button type="button" id="cancel-edit-btn" onclick="resetFormState()"
+                        class="hidden px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- View Schedule Section -->
+        <section id="view-schedule" class="hidden max-w-4xl mx-auto py-6 animate-fade-in">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Patient List</h2>
+                        <p class="text-gray-500 mt-1">Review scheduled surgeries for specific days.</p>
+                    </div>
+                    <div class="bg-white p-2 rounded-lg border border-gray-200 shadow-sm flex items-center space-x-2">
+                        <span class="text-sm text-gray-500 font-medium px-2">Filter by Date:</span>
+                        <input type="date" id="filterDate"
+                            class="border-none focus:ring-0 text-sm font-semibold text-gray-700 bg-transparent cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state"
+                    class="hidden flex flex-col items-center justify-center py-16 text-center bg-white rounded-xl border border-dashed border-gray-300">
+                    <div class="bg-blue-50 p-4 rounded-full mb-4">
+                        <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900">No appointments found</h3>
+                    <p class="text-gray-500 mt-1 max-w-xs">There are no surgeries scheduled for this date. Try selecting
+                        another day or add a new appointment.</p>
+                    <button onclick="showSection('add-patient')"
+                        class="mt-4 text-blue-600 font-medium hover:underline">Schedule New Surgery</button>
+                </div>
+
+                <!-- Appointments List -->
+                <div id="appointments-list" class="space-y-4">
+                    <!-- Cards will be injected here via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Monthly View Section -->
+        <section id="monthly-view" class="hidden max-w-5xl mx-auto py-6 animate-fade-in">
+            <div class="mb-8 flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Monthly Overview</h2>
+                    <p class="text-gray-500 mt-1">Total appointments per day.</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="printMonthlySchedule()"
+                        class="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                            </path>
+                        </svg>
+                        <span>Print Month</span>
+                    </button>
+                    <div class="flex items-center space-x-2 border-l border-gray-300 pl-4">
+                        <button onclick="changeMonth(-1)"
+                            class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <h3 id="current-month-label"
+                            class="text-lg font-semibold text-gray-800 min-w-[150px] text-center">Month Year</h3>
+                        <button onclick="changeMonth(1)"
+                            class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Grid -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <!-- Days Header -->
+                <div class="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
+                    <div class="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Sun</div>
+                    <div class="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Mon</div>
+                    <div class="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Tue</div>
+                    <div class="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Wed</div>
+                    <div class="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Thu</div>
+                    <div class="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Fri</div>
+                    <div class="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Sat</div>
+                </div>
+
+                <!-- Calendar Body -->
+                <div id="calendar-grid" class="grid grid-cols-7 auto-rows-fr bg-gray-200 gap-px">
+                    <!-- Days will be injected here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Success Toast -->
+    <div id="toast"
+        class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center space-x-2 print:hidden">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span>Appointment Scheduled Successfully!</span>
+    </div>
+
+    <!-- Printable Report Container -->
+    <div id="printable-report" class="hidden print:block p-8 bg-white">
+        <!-- Content injected via JS -->
+    </div>
+
+    <script src="app.js"></script>
+    <style>
+        @media print {
+            body>*:not(#printable-report) {
+                display: none !important;
+            }
+
+            body {
+                height: auto;
+                overflow: auto;
+                background-color: white;
+            }
+        }
+    </style>
+</body>
+
+</html>
